@@ -100,7 +100,7 @@ client.on('interactionCreate', async (interaction) => {
 
   // Greet command shobar jonno ekbar-e reply korbe, kono spam hobe na
   if (commandName === 'greet') {
-    return interaction.reply({ content: '> ***YOO EVERYONE sup??***' });
+    return interaction.reply({ content: '> **YOO EVERYONE sup??**' });
   }
 
   if (interaction.user.id !== OWNER_ID) {
