@@ -17,7 +17,7 @@ let isNuking = false;
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const OWNER_ID = process.env.OWNER_ID;
 
-// GIF লিঙ্ক
+// GIF link
 const SPECIFIC_GIF = 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZmFhOXk0NHFzdnA3anUzOXcycmVqN3k0eDE0MmRjYjBwZG56enF4NCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/8oRH6NS8anmyoNf0qi/giphy.gif';
 
 // Register Slash Commands for User Install / Guilds
@@ -50,19 +50,6 @@ client.on('ready', async () => {
   }
 });
 
-// Common nuke loop function using channel.send to prevent timeout
-async function startNukeLoop(channel) {
-  while (isNuking) {
-    try {
-      await channel.send(`**NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
-    } catch (err) {
-      console.error('Error sending message:', err);
-    }
-    // ঠিক ২ সেকেন্ড পরপর পাঠাবে
-    await new Promise(resolve => setTimeout(resolve, 2000));
-  }
-}
-
 // 1. Normal Message Handler (Server-er jnno)
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
@@ -74,7 +61,15 @@ client.on('messageCreate', async (message) => {
     }
     isNuking = true;
     await message.reply('💣 Nuke Activated!');
-    await startNukeLoop(message.channel);
+    
+    while (isNuking) {
+      try {
+        await message.channel.send(`**NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
+      } catch (err) {
+        console.error('Error sending message:', err);
+      }
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
   }
 
   if (message.content.toLowerCase() === 'stop') {
@@ -105,8 +100,21 @@ client.on('interactionCreate', async (interaction) => {
     isNuking = true;
     await interaction.reply({ content: '💣 Nuke Activated!' });
     
-    // interaction.channel ব্যবহার করার কারণে টাইমআউট ছাড়াই গ্রুপে অনবরত স্প্যাম চলতে থাকবে
-    await startNukeLoop(interaction.channel);
+    // Group DM ba Slash command-er khetre followUp diye loop cholbe
+    while (isNuking) {
+      try {
+        await interaction.followUp({ content: `**NUROX IS THE FATHER**\n${SPECIFIC_GIF}` });
+      } catch (err) {
+        console.error('Error sending followUp:', err);
+        // Jodi followUp e kono token expired error ashe, tahbe channel.send try korbe
+        try {
+          await interaction.channel.send(`**NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
+        } catch (e) {
+          console.error('Fallback channel send error:', e);
+        }
+      }
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
   }
 
   if (commandName === 'stop') {
