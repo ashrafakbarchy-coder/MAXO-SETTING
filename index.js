@@ -1,4 +1,3 @@
-
 const express = require('express');
 const app = express();
 app.get('/', (req, res) => res.send('Bot is Alive!'));
@@ -18,7 +17,7 @@ let isNuking = false;
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const OWNER_ID = process.env.OWNER_ID;
 
-// GIF link
+// GIF লিঙ্ক
 const SPECIFIC_GIF = 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZmFhOXk0NHFzdnA3anUzOXcycmVqN3k0eDE0MmRjYjBwZG56enF4NCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/8oRH6NS8anmyoNf0qi/giphy.gif';
 
 // Register Slash Commands for User Install / Guilds
@@ -51,14 +50,15 @@ client.on('ready', async () => {
   }
 });
 
-// Helper function to run normal nuke loop for servers
-async function runNormalNuke(channel) {
+// Common nuke loop function using channel.send to prevent timeout
+async function startNukeLoop(channel) {
   while (isNuking) {
     try {
       await channel.send(`**NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
     } catch (err) {
       console.error('Error sending message:', err);
     }
+    // ঠিক ২ সেকেন্ড পরপর পাঠাবে
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
 }
@@ -74,7 +74,7 @@ client.on('messageCreate', async (message) => {
     }
     isNuking = true;
     await message.reply('💣 Nuke Activated!');
-    await runNormalNuke(message.channel);
+    await startNukeLoop(message.channel);
   }
 
   if (message.content.toLowerCase() === 'stop') {
@@ -105,16 +105,8 @@ client.on('interactionCreate', async (interaction) => {
     isNuking = true;
     await interaction.reply({ content: '💣 Nuke Activated!' });
     
-    // Group DM-e interaction.followUp() use kora hocche
-    while (isNuking) {
-      try {
-        await interaction.followUp({ content: `**NUROX IS THE FATHER**\n${SPECIFIC_GIF}` });
-      } catch (err) {
-        console.error('Error sending followUp:', err);
-        break;
-      }
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    }
+    // interaction.channel ব্যবহার করার কারণে টাইমআউট ছাড়াই গ্রুপে অনবরত স্প্যাম চলতে থাকবে
+    await startNukeLoop(interaction.channel);
   }
 
   if (commandName === 'stop') {
