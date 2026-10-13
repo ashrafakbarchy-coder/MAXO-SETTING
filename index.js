@@ -14,7 +14,7 @@ let isNuking = false;
 const OWNER_ID = '1120017161847582770';
 
 // ⚠️ এখানে আপনার Discord Developer Portal থেকে নেওয়া Bot Token দিন
-const BOT_TOKEN = 'MTMwMzM2OTgzMjM2ODA0NjEwMA.G9dLVr.aTfJLwIfnqBwPi9MqAxskORVz-tuvEsPAfFbvA';
+const BOT_TOKEN = 'MTMwMzM2OTgzMjM2ODA0NjEwMA.GvhPVU.NChhdSd8nS_Ej28X3duM8hovd6-flQBa5sjuMY';
 
 // GIF লিঙ্ক
 const SPECIFIC_GIF = 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZmFhOXk0NHFzdnA3anUzOXcycmVqN3k0eDE0MmRjYjBwZG56enF4NCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/8oRH6NS8anmyoNf0qi/giphy.gif';
