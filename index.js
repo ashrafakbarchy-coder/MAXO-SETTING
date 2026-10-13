@@ -31,6 +31,11 @@ const commands = [
     .setName('stop')
     .setDescription('Stop nuke process')
     .setContexts([0, 1, 2])
+    .setIntegrationTypes([0, 1]),
+  new SlashCommandBuilder()
+    .setName('greet')
+    .setDescription('Greet everyone')
+    .setContexts([0, 1, 2])
     .setIntegrationTypes([0, 1])
 ].map(cmd => cmd.toJSON());
 
@@ -53,6 +58,11 @@ client.on('ready', async () => {
 // 1. Normal Message Handler (Server-er jnno)
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
+
+  if (message.content.toLowerCase() === 'greet') {
+    await message.channel.send('**YOO EVERYONE**');
+  }
+
   if (message.author.id !== OWNER_ID) return;
 
   if (message.content.toLowerCase() === 'nuke') {
@@ -64,7 +74,7 @@ client.on('messageCreate', async (message) => {
     
     while (isNuking) {
       try {
-        await message.channel.send(`> **__NUROX__ IS THE FATHER**\n${SPECIFIC_GIF}`);
+        await message.channel.send(`**> NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
       } catch (err) {
         console.error('Error sending message:', err);
       }
@@ -86,11 +96,16 @@ client.on('messageCreate', async (message) => {
 client.on('interactionCreate', async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
+  const { commandName } = interaction;
+
+  // Greet command shobar jonno ekbar-e reply korbe, kono spam hobe na
+  if (commandName === 'greet') {
+    return interaction.reply({ content: '> ***YOO EVERYONE sup??***' });
+  }
+
   if (interaction.user.id !== OWNER_ID) {
     return interaction.reply({ content: '❌ You are not NUROX to use this command!', ephemeral: true });
   }
-
-  const { commandName } = interaction;
 
   if (commandName === 'nuke') {
     if (isNuking) {
@@ -100,13 +115,11 @@ client.on('interactionCreate', async (interaction) => {
     isNuking = true;
     await interaction.reply({ content: '💣 Nuke Activated!' });
     
-    // Group DM ba Slash command-er khetre followUp diye loop cholbe
     while (isNuking) {
       try {
         await interaction.followUp({ content: `**NUROX IS THE FATHER**\n${SPECIFIC_GIF}` });
       } catch (err) {
         console.error('Error sending followUp:', err);
-        // Jodi followUp e kono token expired error ashe, tahbe channel.send try korbe
         try {
           await interaction.channel.send(`**NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
         } catch (e) {
