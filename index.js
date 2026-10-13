@@ -1,3 +1,7 @@
+const express = require('express');
+const app = express();
+app.get('/', (req, res) => res.send('Bot is Alive!'));
+app.listen(3000, () => console.log('Server is active on port 3000'));
 const { Client, GatewayIntentBits } = require('discord.js');
 
 const client = new Client({
