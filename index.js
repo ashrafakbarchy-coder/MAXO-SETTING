@@ -51,54 +51,38 @@ client.on('ready', async () => {
 });
 
 // Helper function to run the nuke loop
-async function startNuke(channel) {
-  if (isNuking) {
-    return 'Nuke process standardly running already!';
-  }
-
-  isNuking = true;
-  await channel.send('💣 Nuke Activated!');
-
-  // আনলিমিটেড স্প্যাম লুপ
+async function runNukeLoop(targetChannel) {
   while (isNuking) {
     try {
-      await channel.send(`**NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
+      await targetChannel.send(`**NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
     } catch (err) {
       console.error('Error sending message:', err);
     }
-
-    // ঠিক ২ সেকেন্ড পরপর পাঠাবে
     await new Promise(resolve => setTimeout(resolve, 2000));
-  }
-}
-
-// Helper function to stop the nuke loop
-function stopNuke() {
-  if (isNuking) {
-    isNuking = false;
-    return '🛑 Nuke Process Terminated!';
-  } else {
-    return 'No active nuke loop is running.';
   }
 }
 
 // 1. Normal Message Handler (Server-er jnno)
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
-
-  // শুধু আপনি পাঠালেই কাজ করবে
   if (message.author.id !== OWNER_ID) return;
 
-  // NUKE Command
   if (message.content.toLowerCase() === 'nuke') {
-    const resMsg = await startNuke(message.channel);
-    await message.reply(resMsg);
+    if (isNuking) {
+      return message.reply('Nuke process standardly running already!');
+    }
+    isNuking = true;
+    await message.reply('💣 Nuke Activated!');
+    await runNukeLoop(message.channel);
   }
 
-  // STOP Command
   if (message.content.toLowerCase() === 'stop') {
-    const resMsg = stopNuke();
-    await message.reply(resMsg);
+    if (isNuking) {
+      isNuking = false;
+      await message.reply('🛑 Nuke Process Terminated!');
+    } else {
+      await message.reply('No active nuke loop is running.');
+    }
   }
 });
 
@@ -116,16 +100,12 @@ client.on('interactionCreate', async (interaction) => {
     if (isNuking) {
       return interaction.reply({ content: 'Nuke process standardly running already!', ephemeral: true });
     }
+
+    isNuking = true;
     await interaction.reply({ content: '💣 Nuke Activated!' });
     
-    while (isNuking) {
-      try {
-        await interaction.channel.send(`**NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
-      } catch (err) {
-        console.error('Error sending message:', err);
-      }
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    }
+    // Group DM ba channel-e message pathanor jonno interaction.channel use kora
+    await runNukeLoop(interaction.channel);
   }
 
   if (commandName === 'stop') {
