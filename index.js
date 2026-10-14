@@ -42,14 +42,19 @@ const commands = [
 client.on('ready', async () => {
   console.log(`Bot logged in as ${client.user.tag}!`);
 
-  // কাস্টম স্ট্যাটাস (MENTALIST স্পিচ বাবল) সেট করা
+ // Custom status setup with separate emoji object
   client.user.setPresence({
     activities: [{
       name: 'Custom Status',
-      type: 4, 
-      state: '<a:crown_anm:1559736674941014057> LISTENING NUROX'
+      type: 4, // Custom Status
+      state: 'LISTENINING TO NUROX', // Ekhane shudhu text thakbe
+      emoji: {
+        name: 'crown_anm',
+        id: '1559736674941014057',
+        animated: true
+      }
     }],
-    status: 'online' // লাল আইকনের জন্য dnd দেওয়া হয়েছে
+    status: 'dnd'
   });
 
   const rest = new REST({ version: '10' }).setToken(BOT_TOKEN);
