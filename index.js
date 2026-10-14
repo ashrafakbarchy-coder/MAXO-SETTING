@@ -74,7 +74,7 @@ client.on('messageCreate', async (message) => {
     
     while (isNuking) {
       try {
-        await message.channel.send(`**> <a:arrow_anm:1559727268207665182>NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
+        await message.channel.send(`> <a:arrow_anm:1559727268207665182>**NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
       } catch (err) {
         console.error('Error sending message:', err);
       }
