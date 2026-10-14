@@ -112,13 +112,13 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section (Banglish Support & Hang-free)
+  // AI Response Section (Understand any language/Banglish, but reply ONLY in pure Bengali script)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       if (!promptText) return;
 
-      const systemInstruction = "You are MAXO, a friendly Discord bot. The user communicates in Banglish (Bengali written in English letters). Always understand Banglish questions perfectly and reply back in fluent, natural, and friendly Banglish. User says: ";
+      const systemInstruction = "You are MAXO, a friendly Discord bot. Understand whatever language or Banglish the user writes, but you MUST reply exclusively in fluent, natural, and beautiful pure Bengali text (using Bengali alphabet/script). Never use English letters for your response. User says: ";
       const fullPrompt = systemInstruction + promptText;
       const encodedPrompt = encodeURIComponent(fullPrompt);
       
