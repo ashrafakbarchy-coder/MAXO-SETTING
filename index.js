@@ -1,4 +1,3 @@
-
 const express = require('express');
 const app = express();
 app.get('/', (req, res) => res.send('Bot is Alive!'));
@@ -114,7 +113,7 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section (OpenRouter Llama 3.1 8B Free)
+  // AI Response Section (Active Working Free Model: google/gemma-2-9b-it:free)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
@@ -129,7 +128,7 @@ client.on('messageCreate', async (message) => {
           "X-Title": "MAXO Bot"
         },
         body: JSON.stringify({
-          "model": "meta-llama/llama-3.1-8b-instruct:free",
+          "model": "google/gemma-2-9b-it:free",
           "messages": [
             {
               "role": "system",
