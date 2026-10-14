@@ -72,6 +72,13 @@ client.on('messageCreate', async (message) => {
     await message.channel.send('> **YOO EVERYONE SUP?**');
   }
 
+  const content = message.content.toLowerCase();
+  if (content === 'nuke' || content === 'stop') {
+    if (message.author.id !== OWNER_ID) {
+      return message.reply('❌ You are not allowed to use this command!');
+    }
+  }
+
   if (message.author.id !== OWNER_ID) return;
 
   if (message.content.toLowerCase() === 'nuke') {
