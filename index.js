@@ -113,7 +113,7 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section (Active Working Free Model: google/gemma-2-9b-it:free)
+  // AI Response Section (Active Model: qwen/qwen-2.5-7b-instruct:free)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
@@ -128,7 +128,7 @@ client.on('messageCreate', async (message) => {
           "X-Title": "MAXO Bot"
         },
         body: JSON.stringify({
-          "model": "google/gemma-2-9b-it:free",
+          "model": "qwen/qwen-2.5-7b-instruct:free",
           "messages": [
             {
               "role": "system",
