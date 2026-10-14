@@ -1,6 +1,6 @@
 import express from 'express';
 import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } from 'discord.js';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const app = express();
 app.get('/', (req, res) => res.send('Bot is Alive!'));
@@ -20,8 +20,8 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 const OWNER_ID = process.env.OWNER_ID;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-// Initialize Google GenAI with the new SDK
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+// Initialize Google Generative AI
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 // GIF link
 const SPECIFIC_GIF = 'https://media.giphy.com/media/8oRH6NS8anmyoNf0qi/giphy.gif';
@@ -117,20 +117,19 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section using @google/genai SDK & gemini-3.8-flash[cite: 8]
+  // AI Response Section using official @google/generative-ai
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       if (!promptText) return;
 
-      const systemPrompt = "You are MAXO, an extremely cool, witty, and friendly Discord bot owned by NUROX. Understand whatever language or Banglish the user writes, but you MUST reply exclusively in fluent, natural, lively, and beautiful pure Bengali text (using Bengali script). Never write in English or Banglish script. User input: ";
-
-      const interaction = await ai.interactions.create({
-        model: 'gemini-3.8-flash',
-        input: systemPrompt + promptText
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+        systemInstruction: "You are MAXO, an extremely cool, witty, and friendly Discord bot owned by NUROX. Understand whatever language or Banglish the user writes, but you MUST reply exclusively in fluent, natural, lively, and beautiful pure Bengali text (using Bengali script). Never write in English or Banglish script. Make the conversation fun and engaging."
       });
 
-      const replyText = interaction.output_text;
+      const result = await model.generateContent(promptText);
+      const replyText = result.response.text();
 
       if (!replyText) {
         return message.reply('দুঃখিত ভাই, এই মুহূর্তে এআই কোনো উত্তর দিল না।');
