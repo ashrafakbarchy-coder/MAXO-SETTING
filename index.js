@@ -112,24 +112,30 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section (Using Pollinations AI - 100% Free, No Key, No 503 Error)
+  // AI Response Section (Smooth & Hang-free)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       if (!promptText) return;
 
       const encodedPrompt = encodeURIComponent(promptText);
-      const response = await fetch(`https://text.pollinations.ai/${encodedPrompt}`);
+      
+      const response = await fetch(`https://text.pollinations.ai/${encodedPrompt}`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+        }
+      });
+      
       const replyText = await response.text();
 
       if (!replyText) {
-        return message.reply('⚠️ AI kono response dei ni.');
+        return message.reply('⚠️ এআই কোনো রেসপন্স দেয়নি।');
       }
 
       await message.reply(replyText);
     } catch (error) {
       console.error('AI Error:', error);
-      await message.reply('Oops! AI brain ekhon kaj korse na.');
+      await message.reply('ওপ্স! এআই ব্রেন এখন কাজ করছে না।');
     }
   }
 });
