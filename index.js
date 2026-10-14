@@ -113,7 +113,7 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section using Groq API (llama-3.1-8b-instant)
+  // AI Response Section using Groq API (llama-3.3-70b-versatile)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
@@ -126,7 +126,7 @@ client.on('messageCreate', async (message) => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          "model": "llama-3.1-8b-instant",
+          "model": "llama-3.3-70b-versatile",
           "messages": [
             {
               "role": "system",
