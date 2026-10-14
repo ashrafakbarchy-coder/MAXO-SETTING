@@ -125,7 +125,7 @@ client.on('messageCreate', async (message) => {
       // Call Groq API
       const completion = await groq.chat.completions.create({
         messages: [{ role: 'user', content: promptText }],
-        model: 'llama-3.3-70b-versatile',
+        model: 'llama-3.1-8b-instant',
       });
 
       const replyText = completion.choices[0]?.message?.content || 'Ami kisu bujte parlam na!';
