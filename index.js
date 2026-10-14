@@ -42,10 +42,14 @@ const commands = [
 client.on('ready', async () => {
   console.log(`Bot logged in as ${client.user.tag}!`);
 
-  // স্ট্যাটাস সেট করার লাইনগুলো এখানে বসাতে হবে:
+  // কাস্টম স্ট্যাটাস (MENTALIST স্পিচ বাবল) সেট করা
   client.user.setPresence({
-    activities: [{ name: 'NUROX CONTROL PANEL', type: 2 }], // 0 = Playing
-    status: 'online', // 'online', 'idle', 'dnd', 'invisible'
+    activities: [{
+      name: 'Custom Status',
+      type: 4, 
+      state: 'LISTENING NUROX'
+    }],
+    status: 'online' // লাল আইকনের জন্য dnd দেওয়া হয়েছে
   });
 
   const rest = new REST({ version: '10' }).setToken(BOT_TOKEN);
