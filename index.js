@@ -42,19 +42,13 @@ const commands = [
 client.on('ready', async () => {
   console.log(`Bot logged in as ${client.user.tag}!`);
 
- // Custom status setup with separate emoji object
-  client.user.setPresence({
+ client.user.setPresence({
     activities: [{
       name: 'Custom Status',
       type: 4, // Custom Status
-      state: 'LISTENINING TO NUROX', // Ekhane shudhu text thakbe
-      emoji: {
-        name: 'crown_anm',
-        id: '1559736674941014057',
-        animated: true
-      }
+      state: '👑 LISTENING TO NUROX' // Standard Emoji
     }],
-    status: 'ONLINE'
+    status: 'online'
   });
 
   const rest = new REST({ version: '10' }).setToken(BOT_TOKEN);
