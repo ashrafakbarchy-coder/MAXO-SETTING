@@ -124,7 +124,7 @@ client.on('messageCreate', async (message) => {
       if (!promptText) return;
 
       const aiResponse = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
+        model: 'gemini-2.5-flash',
         contents: promptText,
       });
 
