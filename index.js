@@ -1,3 +1,4 @@
+
 const express = require('express');
 const app = express();
 app.get('/', (req, res) => res.send('Bot is Alive!'));
@@ -113,7 +114,7 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section (OpenRouter Free Model - Ultra Smart & Fun)
+  // AI Response Section (OpenRouter Llama 3.1 8B Free)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
@@ -128,11 +129,11 @@ client.on('messageCreate', async (message) => {
           "X-Title": "MAXO Bot"
         },
         body: JSON.stringify({
-          "model": "google/gemma-2-9b-it:free",
+          "model": "meta-llama/llama-3.1-8b-instruct:free",
           "messages": [
             {
               "role": "system",
-              "content": "You are MAXO, an extremely cool, witty, and friendly Discord bot owned by NUROX. Understand whatever language or Banglish the user writes, but you MUST reply exclusively in fluent, natural, lively, and beautiful pure Bengali text (using Bengali script). Make the conversation fun and engaging."
+              "content": "You are MAXO, an extremely cool, witty, and friendly Discord bot owned by NUROX. Understand whatever language or Banglish the user writes, but you MUST reply exclusively in fluent, natural, lively, and beautiful pure Bengali text (using Bengali script). Never write in English or Banglish script. Make the conversation fun and engaging."
             },
             {
               "role": "user",
@@ -146,6 +147,7 @@ client.on('messageCreate', async (message) => {
       const replyText = data.choices?.[0]?.message?.content;
 
       if (!replyText) {
+        console.error("OpenRouter Response Error:", data);
         return message.reply('দুঃখিত ভাই, এই মুহূর্তে এআই কোনো উত্তর দিল না।');
       }
 
