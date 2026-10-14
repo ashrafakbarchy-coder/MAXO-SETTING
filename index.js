@@ -47,7 +47,7 @@ client.on('ready', async () => {
     activities: [{
       name: 'Custom Status',
       type: 4, 
-      state: ' <a:860332crownred:1559736674941014057> LISTENING NUROX'
+      state: '<a:crown_anm:1559736674941014057> LISTENING NUROX'
     }],
     status: 'online' // লাল আইকনের জন্য dnd দেওয়া হয়েছে
   });
