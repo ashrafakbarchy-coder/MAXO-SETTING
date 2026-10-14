@@ -75,7 +75,7 @@ client.on('messageCreate', async (message) => {
   const content = message.content.toLowerCase();
   if (content === 'nuke' || content === 'stop') {
     if (message.author.id !== OWNER_ID) {
-      return message.reply('❌ You are not allowed to use this command!');
+      return message.reply('❌ You are not NUROX to use this command!');
     }
   }
 
