@@ -1,6 +1,5 @@
 import express from 'express';
 import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } from 'discord.js';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const app = express();
 app.get('/', (req, res) => res.send('Bot is Alive!'));
@@ -18,10 +17,7 @@ let isNuking = false;
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const OWNER_ID = process.env.OWNER_ID;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-// Initialize Google Generative AI
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 // GIF link
 const SPECIFIC_GIF = 'https://media.giphy.com/media/8oRH6NS8anmyoNf0qi/giphy.gif';
@@ -117,21 +113,38 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section using official @google/generative-ai
+  // AI Response Section using Groq API (llama-3.1-8b-instant)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       if (!promptText) return;
 
-      const model = genAI.getGenerativeModel({ 
-        model: "gemini-2.0-flash",
-        systemInstruction: "You are MAXO, an extremely cool, witty, and friendly Discord bot owned by NUROX. Understand whatever language or Banglish the user writes, but you MUST reply exclusively in fluent, natural, lively, and beautiful pure Bengali text (using Bengali script). Never write in English or Banglish script. Make the conversation fun and engaging."
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          "model": "llama-3.1-8b-instant",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are MAXO, an extremely cool, witty, and friendly Discord bot owned by NUROX. Understand whatever language or Banglish the user writes, but you MUST reply exclusively in fluent, natural, lively, and beautiful pure Bengali text (using Bengali script). Never write in English or Banglish script. Make the conversation fun and engaging."
+            },
+            {
+              "role": "user",
+              "content": promptText
+            }
+          ]
+        })
       });
 
-      const result = await model.generateContent(promptText);
-      const replyText = result.response.text();
+      const data = await response.json();
+      const replyText = data.choices?.[0]?.message?.content;
 
       if (!replyText) {
+        console.error("Groq Response Error:", data);
         return message.reply('দুঃখিত ভাই, এই মুহূর্তে এআই কোনো উত্তর দিল না।');
       }
 
