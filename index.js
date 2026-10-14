@@ -17,6 +17,7 @@ let isNuking = false;
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const OWNER_ID = process.env.OWNER_ID;
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
 // GIF link
 const SPECIFIC_GIF = 'https://media.giphy.com/media/8oRH6NS8anmyoNf0qi/giphy.gif';
@@ -112,33 +113,46 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section with {} prevention & Pure Bengali reply
+  // AI Response Section (OpenRouter Free Model - Ultra Smart & Fun)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       if (!promptText) return;
 
-      const systemInstruction = "You are MAXO, a friendly Discord bot. Understand whatever language or Banglish the user writes, but you MUST reply exclusively in fluent, natural, and beautiful pure Bengali text (using Bengali alphabet/script). Never use English letters for your response. User says: ";
-      const fullPrompt = systemInstruction + promptText;
-      const encodedPrompt = encodeURIComponent(fullPrompt);
-      
-      const response = await fetch(`https://text.pollinations.ai/${encodedPrompt}`, {
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-        }
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://github.com/ashrafakbarchy-coder/nuke-bot",
+          "X-Title": "MAXO Bot"
+        },
+        body: JSON.stringify({
+          "model": "google/gemma-2-9b-it:free",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are MAXO, an extremely cool, witty, and friendly Discord bot owned by NUROX. Understand whatever language or Banglish the user writes, but you MUST reply exclusively in fluent, natural, lively, and beautiful pure Bengali text (using Bengali script). Make the conversation fun and engaging."
+            },
+            {
+              "role": "user",
+              "content": promptText
+            }
+          ]
+        })
       });
-      
-      let replyText = await response.text();
 
-      // Jodi server theke khali ba {} ase, tahle fallback message dibe
-      if (!replyText || replyText.trim() === '{}' || replyText.trim() === '"{}"') {
-        replyText = "দুঃখিত, এই মুহূর্তে সার্ভার থেকে কোনো উত্তর পাওয়া যায়নি। একটু পরে আবার চেষ্টা করুন!";
+      const data = await response.json();
+      const replyText = data.choices?.[0]?.message?.content;
+
+      if (!replyText) {
+        return message.reply('দুঃখিত ভাই, এই মুহূর্তে এআই কোনো উত্তর দিল না।');
       }
 
       await message.reply(replyText);
     } catch (error) {
       console.error('AI Error:', error);
-      await message.reply('ওপ্স! এআই ব্রেন এখন কাজ করছে না।');
+      await message.reply('ওপ্স! এআই ব্রেনের সাথে কানেক্ট করতে সমস্যা হচ্ছে।');
     }
   }
 });
