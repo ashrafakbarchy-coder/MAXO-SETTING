@@ -60,7 +60,7 @@ client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
   if (message.content.toLowerCase() === 'greet') {
-    await message.channel.send('**YOO EVERYONE**');
+    await message.channel.send('> **YOO EVERYONE SUP?**');
   }
 
   if (message.author.id !== OWNER_ID) return;
@@ -100,7 +100,7 @@ client.on('interactionCreate', async (interaction) => {
 
   // Greet command shobar jonno ekbar-e reply korbe, kono spam hobe na
   if (commandName === 'greet') {
-    return interaction.reply({ content: '> **YOO EVERYONE sup??**' });
+    return interaction.reply({ content: '> **YOO EVERYONE SUP?**' });
   }
 
   if (interaction.user.id !== OWNER_ID) {
