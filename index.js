@@ -112,13 +112,15 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section (Smooth & Hang-free)
+  // AI Response Section (Banglish Support & Hang-free)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       if (!promptText) return;
 
-      const encodedPrompt = encodeURIComponent(promptText);
+      const systemInstruction = "You are MAXO, a friendly Discord bot. The user communicates in Banglish (Bengali written in English letters). Always understand Banglish questions perfectly and reply back in fluent, natural, and friendly Banglish. User says: ";
+      const fullPrompt = systemInstruction + promptText;
+      const encodedPrompt = encodeURIComponent(fullPrompt);
       
       const response = await fetch(`https://text.pollinations.ai/${encodedPrompt}`, {
         headers: {
