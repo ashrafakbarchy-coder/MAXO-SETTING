@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } from 'discord.js';
+import { GoogleGenAI } from '@google/genai';
+
 const app = express();
 app.get('/', (req, res) => res.send('Bot is Alive!'));
 app.listen(3000, () => console.log('Server is active on port 3000'));
-
-const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
 
 const client = new Client({
   intents: [
@@ -17,7 +18,10 @@ let isNuking = false;
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const OWNER_ID = process.env.OWNER_ID;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
+// Initialize Google GenAI with the new SDK
+const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 // GIF link
 const SPECIFIC_GIF = 'https://media.giphy.com/media/8oRH6NS8anmyoNf0qi/giphy.gif';
@@ -113,38 +117,22 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section (ChatGPT - gpt-4o-mini)
+  // AI Response Section using @google/genai SDK & gemini-3.8-flash[cite: 8]
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       if (!promptText) return;
 
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${OPENAI_API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          "model": "gpt-4o-mini",
-          "messages": [
-            {
-              "role": "system",
-              "content": "You are MAXO, an extremely cool, witty, and friendly Discord bot owned by NUROX. Understand whatever language or Banglish the user writes, but you MUST reply exclusively in fluent, natural, lively, and beautiful pure Bengali text (using Bengali script). Never write in English or Banglish script. Make the conversation fun and engaging."
-            },
-            {
-              "role": "user",
-              "content": promptText
-            }
-          ]
-        })
+      const systemPrompt = "You are MAXO, an extremely cool, witty, and friendly Discord bot owned by NUROX. Understand whatever language or Banglish the user writes, but you MUST reply exclusively in fluent, natural, lively, and beautiful pure Bengali text (using Bengali script). Never write in English or Banglish script. User input: ";
+
+      const interaction = await ai.interactions.create({
+        model: 'gemini-3.8-flash',
+        input: systemPrompt + promptText
       });
 
-      const data = await response.json();
-      const replyText = data.choices?.[0]?.message?.content;
+      const replyText = interaction.output_text;
 
       if (!replyText) {
-        console.error("OpenAI Response Error:", data);
         return message.reply('দুঃখিত ভাই, এই মুহূর্তে এআই কোনো উত্তর দিল না।');
       }
 
