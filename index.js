@@ -42,6 +42,12 @@ const commands = [
 client.on('ready', async () => {
   console.log(`Bot logged in as ${client.user.tag}!`);
 
+  // স্ট্যাটাস সেট করার লাইনগুলো এখানে বসাতে হবে:
+  client.user.setPresence({
+    activities: [{ name: 'Nurox Control Panel', type: 0 }], // 0 = Playing
+    status: 'online', // 'online', 'idle', 'dnd', 'invisible'
+  });
+
   const rest = new REST({ version: '10' }).setToken(BOT_TOKEN);
   try {
     console.log('Registering slash commands...');
