@@ -2,11 +2,12 @@ const express = require('express');
 const app = express();
 app.get('/', (req, res) => res.send('Bot is Alive!'));
 app.listen(3000, () => console.log('Server is active on port 3000'));
-const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
-const { GoogleGenAI } = require('@google/genai');
 
-// Google Gemini AI initialize
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_KEY });
+const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
+const Groq = require('groq-sdk');
+
+// Groq AI initialize
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 const client = new Client({
   intents: [
@@ -21,10 +22,10 @@ let isNuking = false;
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const OWNER_ID = process.env.OWNER_ID;
 
-// GIF link fix
+// GIF link
 const SPECIFIC_GIF = 'https://media.giphy.com/media/8oRH6NS8anmyoNf0qi/giphy.gif';
 
-// Register Slash Commands for User Install / Guilds
+// Register Slash Commands
 const commands = [
   new SlashCommandBuilder()
     .setName('nuke')
@@ -68,7 +69,7 @@ client.on('ready', async () => {
   }
 });
 
-// 1. Normal Message Handler (Server-er jnno)
+// 1. Normal Message Handler
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
@@ -79,14 +80,12 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  // Jodi keu 'nuke' ba 'stop' likhe ebong she jodi owner na hoy:
   if (content === 'nuke' || content === 'stop') {
     if (message.author.id !== OWNER_ID) {
       return message.reply('❌ You are not NUROX to use this command!');
     }
   }
 
-  // Jodi owner na hoy, tahle nicher owner command gulo skip kore AI response check korbe
   if (message.author.id === OWNER_ID) {
     if (content === 'nuke') {
       if (isNuking) {
@@ -117,26 +116,28 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // Jodi kono normal member bot ke mention kore, tahle AI response dibe
+  // AI Response Section (Groq Llama 3)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       if (!promptText) return;
 
-      const aiResponse = await ai.models.generateContent({
-        model: 'gemini-2.5-flash-lite',
-        contents: promptText,
+      // Call Groq API
+      const completion = await groq.chat.completions.create({
+        messages: [{ role: 'user', content: promptText }],
+        model: 'llama-3.3-70b-versatile',
       });
 
-      await message.reply(aiResponse.text);
+      const replyText = completion.choices[0]?.message?.content || 'Ami kisu bujte parlam na!';
+      await message.reply(replyText);
     } catch (error) {
       console.error('AI Error:', error);
-      await message.reply('Oops! Amar AI brain ekhon kaj korse na.');
+      await message.reply('Oops! Amar AI brain ekhon response dite parse na.');
     }
   }
 });
 
-// 2. Slash Command Handler (Group DM / User Install-er jnno)
+// 2. Slash Command Handler
 client.on('interactionCreate', async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
@@ -160,7 +161,7 @@ client.on('interactionCreate', async (interaction) => {
     
     while (isNuking) {
       try {
-        await interaction.followUp({ content: `> # **<a:crown_anm:1559736674941014057>NUROX ISTHE FATHER**\n${SPECIFIC_GIF}` });
+        await interaction.followUp({ content: `> # **<a:crown_anm:1559736674941014057>NUROX IS THE FATHER**\n${SPECIFIC_GIF}` });
       } catch (err) {
         console.error('Error sending followUp:', err);
         try {
