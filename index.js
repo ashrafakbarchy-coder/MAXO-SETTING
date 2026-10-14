@@ -4,10 +4,6 @@ app.get('/', (req, res) => res.send('Bot is Alive!'));
 app.listen(3000, () => console.log('Server is active on port 3000'));
 
 const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
-const { GoogleGenAI } = require('@google/genai');
-
-// Google Gemini AI initialize (Render er GEMINI_KEY use korbe)
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_KEY });
 
 const client = new Client({
   intents: [
@@ -116,21 +112,24 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section (Gemini Official SDK)
+  // AI Response Section (Using Pollinations AI - 100% Free, No Key, No 503 Error)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       if (!promptText) return;
 
-      const aiResponse = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
-        contents: promptText,
-      });
+      const encodedPrompt = encodeURIComponent(promptText);
+      const response = await fetch(`https://text.pollinations.ai/${encodedPrompt}`);
+      const replyText = await response.text();
 
-      await message.reply(aiResponse.text);
+      if (!replyText) {
+        return message.reply('⚠️ AI kono response dei ni.');
+      }
+
+      await message.reply(replyText);
     } catch (error) {
       console.error('AI Error:', error);
-      await message.reply('Oops! Amar AI brain ekhon response dite parse na.');
+      await message.reply('Oops! AI brain ekhon kaj korse na.');
     }
   }
 });
