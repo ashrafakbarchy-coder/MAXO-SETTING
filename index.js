@@ -126,11 +126,11 @@ client.on('interactionCreate', async (interaction) => {
     
     while (isNuking) {
       try {
-        await interaction.followUp({ content: `**NUROX IS THE FATHER**\n${SPECIFIC_GIF}` });
+        await interaction.followUp({ content: `> # **<a:crown_anm:1559736674941014057>NUROX IS THE FATHER**\n${SPECIFIC_GIF}` });
       } catch (err) {
         console.error('Error sending followUp:', err);
         try {
-          await interaction.channel.send(`**NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
+          await interaction.channel.send(`> # **<a:crown_anm:1559736674941014057>NUROX IS THE FATHER**\n${SPECIFIC_GIF}`);
         } catch (e) {
           console.error('Fallback channel send error:', e);
         }
