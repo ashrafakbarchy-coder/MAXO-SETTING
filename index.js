@@ -54,7 +54,7 @@ client.on('ready', async () => {
         animated: true
       }
     }],
-    status: 'dnd'
+    status: 'ONLINE'
   });
 
   const rest = new REST({ version: '10' }).setToken(BOT_TOKEN);
