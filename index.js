@@ -112,7 +112,7 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section (Understand any language/Banglish, but reply ONLY in pure Bengali script)
+  // AI Response Section with {} prevention & Pure Bengali reply
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
@@ -128,10 +128,11 @@ client.on('messageCreate', async (message) => {
         }
       });
       
-      const replyText = await response.text();
+      let replyText = await response.text();
 
-      if (!replyText) {
-        return message.reply('⚠️ এআই কোনো রেসপন্স দেয়নি।');
+      // Jodi server theke khali ba {} ase, tahle fallback message dibe
+      if (!replyText || replyText.trim() === '{}' || replyText.trim() === '"{}"') {
+        replyText = "দুঃখিত, এই মুহূর্তে সার্ভার থেকে কোনো উত্তর পাওয়া যায়নি। একটু পরে আবার চেষ্টা করুন!";
       }
 
       await message.reply(replyText);
