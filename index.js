@@ -17,7 +17,7 @@ let isNuking = false;
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const OWNER_ID = process.env.OWNER_ID;
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 // GIF link
 const SPECIFIC_GIF = 'https://media.giphy.com/media/8oRH6NS8anmyoNf0qi/giphy.gif';
@@ -113,22 +113,20 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section (Active Model: qwen/qwen-2.5-7b-instruct:free)
+  // AI Response Section (ChatGPT - gpt-4o-mini)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       if (!promptText) return;
 
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json",
-          "HTTP-Referer": "https://github.com/ashrafakbarchy-coder/nuke-bot",
-          "X-Title": "MAXO Bot"
+          "Authorization": `Bearer ${OPENAI_API_KEY}`,
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          "model": "qwen/qwen-2.5-7b-instruct:free",
+          "model": "gpt-4o-mini",
           "messages": [
             {
               "role": "system",
@@ -146,7 +144,7 @@ client.on('messageCreate', async (message) => {
       const replyText = data.choices?.[0]?.message?.content;
 
       if (!replyText) {
-        console.error("OpenRouter Response Error:", data);
+        console.error("OpenAI Response Error:", data);
         return message.reply('দুঃখিত ভাই, এই মুহূর্তে এআই কোনো উত্তর দিল না।');
       }
 
