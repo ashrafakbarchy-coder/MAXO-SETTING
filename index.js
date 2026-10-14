@@ -44,7 +44,7 @@ client.on('ready', async () => {
 
   // স্ট্যাটাস সেট করার লাইনগুলো এখানে বসাতে হবে:
   client.user.setPresence({
-    activities: [{ name: 'Nurox Control Panel', type: 0 }], // 0 = Playing
+    activities: [{ name: 'NUROX CONTROL PANEL', type: 2 }], // 0 = Playing
     status: 'online', // 'online', 'idle', 'dnd', 'invisible'
   });
 
