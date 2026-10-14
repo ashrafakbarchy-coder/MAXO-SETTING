@@ -4,10 +4,10 @@ app.get('/', (req, res) => res.send('Bot is Alive!'));
 app.listen(3000, () => console.log('Server is active on port 3000'));
 
 const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
-const Groq = require('groq-sdk');
+const { GoogleGenAI } = require('@google/genai');
 
-// Groq AI initialize
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+// Google Gemini AI initialize (Render er GEMINI_KEY use korbe)
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_KEY });
 
 const client = new Client({
   intents: [
@@ -116,20 +116,18 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section (Groq Llama 3)
+  // AI Response Section (Gemini Official SDK)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       if (!promptText) return;
 
-      // Call Groq API
-      const completion = await groq.chat.completions.create({
-        messages: [{ role: 'user', content: promptText }],
-        model: 'llama-3.1-8b-instant',
+      const aiResponse = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: promptText,
       });
 
-      const replyText = completion.choices[0]?.message?.content || 'Ami kisu bujte parlam na!';
-      await message.reply(replyText);
+      await message.reply(aiResponse.text);
     } catch (error) {
       console.error('AI Error:', error);
       await message.reply('Oops! Amar AI brain ekhon response dite parse na.');
