@@ -113,7 +113,7 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // AI Response Section using Groq API (llama3-8b-8192)
+  // AI Response Section (Independent & Smart)
   if (message.mentions.has(client.user)) {
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
@@ -130,7 +130,7 @@ client.on('messageCreate', async (message) => {
           "messages": [
             {
               "role": "system",
-              "content": "You are MAXO, an extremely cool, witty, and friendly Discord bot owned by NUROX. Understand whatever language or Banglish the user writes, but you MUST reply exclusively in fluent, natural, lively, and beautiful pure Bengali text (using Bengali script). Never write in English or Banglish script. Make the conversation fun and engaging."
+              "content": "You are MAXO, an extremely cool, witty, intelligent, and helpful Discord bot created/owned by NUROX. You are completely free to express yourself naturally in whatever language or script the user talks to you in (Bengali, Banglish, English, Code, etc.). Be engaging, smart, and friendly."
             },
             {
               "role": "user",
