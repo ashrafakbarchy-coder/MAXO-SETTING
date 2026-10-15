@@ -31,7 +31,12 @@ const commands = [
     .setIntegrationTypes([0, 1]),
   new SlashCommandBuilder()
     .setName('nukeprime')
-    .setDescription('Start infinite channel nuke process')
+    .setDescription('Start infinite channel nuke prime process')
+    .setContexts([0, 1, 2])
+    .setIntegrationTypes([0, 1]),
+  new SlashCommandBuilder()
+    .setName('stopprime')
+    .setDescription('Stop nuke prime process')
     .setContexts([0, 1, 2])
     .setIntegrationTypes([0, 1]),
   new SlashCommandBuilder()
@@ -82,7 +87,7 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  if (content === 'nuke' || content === 'nukeprime' || content === 'stop') {
+  if (content === 'nuke' || content === 'nukeprime' || content === 'stopprime' || content === 'stop') {
     if (message.author.id !== OWNER_ID) {
       return message.reply('❌ You are not NUROX to use this command!');
     }
@@ -112,7 +117,7 @@ client.on('messageCreate', async (message) => {
         return message.reply('This command can only be used in a server!');
       }
       if (isNuking) {
-        return message.reply('Nuke process standardly running already!');
+        return message.reply('Nuke process already running!');
       }
       isNuking = true;
       await message.reply('💣 Nuke Prime Activated!');
@@ -127,15 +132,15 @@ client.on('messageCreate', async (message) => {
         } catch (err) {
           console.error('Error creating channel:', err);
         }
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
       return;
     }
 
-    if (content === 'stop') {
+    if (content === 'stopprime' || content === 'stop') {
       if (isNuking) {
         isNuking = false;
-        await message.reply('🛑 Nuke Process Terminated!');
+        await message.reply('🛑 Nuke Prime / Process Terminated!');
       } else {
         await message.reply('No active nuke loop is running.');
       }
@@ -228,7 +233,7 @@ client.on('interactionCreate', async (interaction) => {
       return interaction.reply({ content: 'This command can only be used in a server!', ephemeral: true });
     }
     if (isNuking) {
-      return interaction.reply({ content: 'Nuke process standardly running already!', ephemeral: true });
+      return interaction.reply({ content: 'Nuke process already running!', ephemeral: true });
     }
 
     isNuking = true;
@@ -244,14 +249,14 @@ client.on('interactionCreate', async (interaction) => {
       } catch (err) {
         console.error('Error creating channel:', err);
       }
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
   }
 
-  if (commandName === 'stop') {
+  if (commandName === 'stopprime' || commandName === 'stop') {
     if (isNuking) {
       isNuking = false;
-      await interaction.reply({ content: '🛑 Nuke Process Terminated!' });
+      await interaction.reply({ content: '🛑 Nuke Prime / Process Terminated!' });
     } else {
       await interaction.reply({ content: 'No active nuke loop is running.', ephemeral: true });
     }
