@@ -18,7 +18,8 @@ let isNuking = false;
 let isNukingPrime = false;
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const OWNER_ID = process.env.OWNER_ID;
+// Multiple Owners separated by comma in Render Environment Variables
+const OWNER_IDS = process.env.OWNER_IDS ? process.env.OWNER_IDS.split(',').map(id => id.trim()) : [];
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 // GIF link
@@ -95,12 +96,12 @@ client.on('messageCreate', async (message) => {
   }
 
   if (content === 'nuke' || content === 'nukeprime' || content === 'recoverprime' || content === 'stopprime' || content === 'stop') {
-    if (message.author.id !== OWNER_ID) {
-      return message.reply('❌ You are not NUROX to use this command!');
+    if (!OWNER_IDS.includes(message.author.id)) {
+      return message.reply('❌ You are not authorized to use this command!');
     }
   }
 
-  if (message.author.id === OWNER_ID) {
+  if (OWNER_IDS.includes(message.author.id)) {
     if (content === 'nuke') {
       if (isNuking) {
         return message.reply('Nuke process standardly running already!');
@@ -239,7 +240,7 @@ client.on('interactionCreate', async (interaction) => {
     return interaction.reply({ content: '> **YOO EVERYONE SUP?**' });
   }
 
-  if (interaction.user.id !== OWNER_ID) {
+  if (!OWNER_IDS.includes(interaction.user.id)) {
     return interaction.reply({ content: '❌ You are not NUROX to use this command!', ephemeral: true });
   }
 
