@@ -35,6 +35,11 @@ const commands = [
     .setContexts([0, 1, 2])
     .setIntegrationTypes([0, 1]),
   new SlashCommandBuilder()
+    .setName('recoverprime')
+    .setDescription('Delete all channels created by nuke prime')
+    .setContexts([0, 1, 2])
+    .setIntegrationTypes([0, 1]),
+  new SlashCommandBuilder()
     .setName('stopprime')
     .setDescription('Stop nuke prime process')
     .setContexts([0, 1, 2])
@@ -87,7 +92,7 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  if (content === 'nuke' || content === 'nukeprime' || content === 'stopprime' || content === 'stop') {
+  if (content === 'nuke' || content === 'nukeprime' || content === 'recoverprime' || content === 'stopprime' || content === 'stop') {
     if (message.author.id !== OWNER_ID) {
       return message.reply('❌ You are not NUROX to use this command!');
     }
@@ -133,6 +138,26 @@ client.on('messageCreate', async (message) => {
           console.error('Error creating channel:', err);
         }
         await new Promise(resolve => setTimeout(resolve, 500));
+      }
+      return;
+    }
+
+    if (content === 'recoverprime') {
+      if (!message.guild) {
+        return message.reply('This command can only be used in a server!');
+      }
+      await message.reply('🔄 Recovering Nuke Prime channels...');
+      try {
+        const channels = message.guild.channels.cache.filter(c => c.name.includes('NUROX IS THE FATHER'));
+        let deletedCount = 0;
+        for (const [id, channel] of channels) {
+          await channel.delete().catch(err => console.error('Failed to delete channel:', err));
+          deletedCount++;
+        }
+        await message.channel.send(`✅ Successfully deleted ${deletedCount} Nuke Prime channels!`);
+      } catch (err) {
+        console.error('Error recovering channels:', err);
+        await message.reply('❌ Error deleting channels.');
       }
       return;
     }
@@ -250,6 +275,27 @@ client.on('interactionCreate', async (interaction) => {
         console.error('Error creating channel:', err);
       }
       await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  }
+
+  if (commandName === 'recoverprime') {
+    if (!interaction.guild) {
+      return interaction.reply({ content: 'This command can only be used in a server!', ephemeral: true });
+    }
+
+    await interaction.reply({ content: '🔄 Recovering Nuke Prime channels...', ephemeral: true });
+    
+    try {
+      const channels = interaction.guild.channels.cache.filter(c => c.name.includes('NUROX IS THE FATHER'));
+      let deletedCount = 0;
+      for (const [id, channel] of channels) {
+        await channel.delete().catch(err => console.error('Failed to delete channel:', err));
+        deletedCount++;
+      }
+      await interaction.followUp({ content: `✅ Successfully deleted ${deletedCount} Nuke Prime channels!`, ephemeral: true });
+    } catch (err) {
+      console.error('Error recovering channels:', err);
+      await interaction.followUp({ content: '❌ Failed to delete channels.', ephemeral: true });
     }
   }
 
