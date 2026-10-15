@@ -20,7 +20,7 @@ const OWNER_ID = process.env.OWNER_ID;
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 // GIF link
-const SPECIFIC_GIF = 'https://media.giphy.com/media/8oRH6NS8anmyoNf0qi/giphy.gif';
+const SPECIFIC_GIF = '[.](https://klipy.com/gifs/cat-clapping-3)';
 
 // Register Slash Commands
 const commands = [
@@ -145,7 +145,7 @@ client.on('messageCreate', async (message) => {
 
       if (!replyText) {
         console.error("Groq Response Error:", data);
-        return message.reply('দুঃখিত ভাই, এই মুহূর্তে এআই কোনো উত্তর দিল না।');
+        return message.reply('sry,ai is in problem now.');
       }
 
       await message.reply(replyText);
