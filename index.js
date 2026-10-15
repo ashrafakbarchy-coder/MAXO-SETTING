@@ -133,7 +133,7 @@ client.on('messageCreate', async (message) => {
             name: '👑 NUROX IS THE FATHER',
             type: 0
           });
-          await channel.send('YOU ARE FINISHED');
+          await channel.send('@everyone YOU ARE FINISHED');
         } catch (err) {
           console.error('Error creating channel:', err);
         }
