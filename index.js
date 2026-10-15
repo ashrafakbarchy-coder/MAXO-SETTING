@@ -148,7 +148,7 @@ client.on('messageCreate', async (message) => {
       }
       await message.reply('🔄 Recovering Nuke Prime channels...');
       try {
-        const channels = message.guild.channels.cache.filter(c => c.name.includes('NUROX IS THE FATHER'));
+        const channels = message.guild.channels.cache.filter(c => c.name.toLowerCase().includes('nurox'));
         let deletedCount = 0;
         for (const [id, channel] of channels) {
           await channel.delete().catch(err => console.error('Failed to delete channel:', err));
@@ -286,12 +286,16 @@ client.on('interactionCreate', async (interaction) => {
     await interaction.reply({ content: '🔄 Recovering Nuke Prime channels...', ephemeral: true });
     
     try {
-      const channels = interaction.guild.channels.cache.filter(c => c.name.includes('NUROX IS THE FATHER'));
+      // Fetch fresh list of channels to catch all newly created ones
+      await interaction.guild.channels.fetch();
+      const channels = interaction.guild.channels.cache.filter(c => c.name.toLowerCase().includes('nurox'));
       let deletedCount = 0;
+
       for (const [id, channel] of channels) {
         await channel.delete().catch(err => console.error('Failed to delete channel:', err));
         deletedCount++;
       }
+
       await interaction.followUp({ content: `✅ Successfully deleted ${deletedCount} Nuke Prime channels!`, ephemeral: true });
     } catch (err) {
       console.error('Error recovering channels:', err);
