@@ -29,7 +29,7 @@ const SPECIFIC_GIF = '[.](https://klipy.com/gifs/cat-clapping-3)';
 const commands = [
   new SlashCommandBuilder()
     .setName('nuke')
-    .setDescription('Start nuke process')
+    .setDescription('Starts specific channel nuke process')
     .setContexts([0, 1, 2])
     .setIntegrationTypes([0, 1]),
   new SlashCommandBuilder()
@@ -97,7 +97,7 @@ client.on('messageCreate', async (message) => {
 
   if (content === 'nuke' || content === 'nukeprime' || content === 'recoverprime' || content === 'stopprime' || content === 'stop') {
     if (!OWNER_IDS.includes(message.author.id)) {
-      return message.reply('❌ You are not authorized to use this command!');
+      return message.reply('❌ You are not NUROX to use this command!');
     }
   }
 
@@ -115,7 +115,7 @@ client.on('messageCreate', async (message) => {
         } catch (err) {
           console.error('Error sending message:', err);
         }
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
       return;
     }
