@@ -101,7 +101,7 @@ client.on('messageCreate', async (message) => {
   // Handle m disable all and m enable all commands (Only for Owners)
   if (content === 'm disable all' || content === 'm enable all') {
     if (!OWNER_IDS.includes(message.author.id)) {
-      return message.reply('❌ You are not authorized to use this command!');
+      return message.reply('❌ You are not NUROX to use this command!');
     }
     if (content === 'm disable all') {
       disabledChannels.add(message.channel.id);
