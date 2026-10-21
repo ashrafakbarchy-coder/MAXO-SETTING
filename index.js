@@ -17,6 +17,9 @@ const client = new Client({
 let isNuking = false;
 let isNukingPrime = false;
 
+// Set to keep track of channels where AI is disabled
+const disabledChannels = new Set();
+
 const BOT_TOKEN = process.env.BOT_TOKEN;
 // Multiple Owners separated by comma in Render Environment Variables
 const OWNER_IDS = process.env.OWNER_IDS ? process.env.OWNER_IDS.split(',').map(id => id.trim()) : [];
@@ -93,6 +96,21 @@ client.on('messageCreate', async (message) => {
   if (content === 'greet') {
     await message.channel.send('> **YOO EVERYONE SUP?**');
     return;
+  }
+
+  // Handle m disable all and m enable all commands
+  if (content === 'm disable all' || content === 'm enable all') {
+    if (!OWNER_IDS.includes(message.author.id)) {
+      return message.reply('❌ You are not authorized to use this command!');
+    }
+    if (content === 'm disable all') {
+      disabledChannels.add(message.channel.id);
+      return message.reply('❌ AI response has been disabled in this channel.');
+    }
+    if (content === 'm enable all') {
+      disabledChannels.delete(message.channel.id);
+      return message.reply('✅ AI response has been enabled in this channel.');
+    }
   }
 
   if (content === 'nuke' || content === 'nukeprime' || content === 'recoverprime' || content === 'stopprime' || content === 'stop') {
@@ -189,11 +207,14 @@ client.on('messageCreate', async (message) => {
 
   // AI Response Section (Independent & Smart)
   if (message.mentions.has(client.user)) {
+    // Check if AI is disabled in this specific channel
+    if (disabledChannels.has(message.channel.id)) return;
+
     try {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       if (!promptText) return;
 
-      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      const response =- await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${GROQ_API_KEY}`,
@@ -225,7 +246,7 @@ client.on('messageCreate', async (message) => {
       await message.reply(replyText);
     } catch (error) {
       console.error('AI Error:', error);
-      await message.reply('ওপ্স! এআই ব্রেনের সাথে কানেক্ট করতে সমস্যা হচ্ছে।');
+      await message.reply('ops! ai brain-er sathe connect korte somossa hocche.');
     }
   }
 });
