@@ -98,7 +98,7 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  // Handle m disable all and m enable all commands
+  // Handle m disable all and m enable all commands (Only for Owners)
   if (content === 'm disable all' || content === 'm enable all') {
     if (!OWNER_IDS.includes(message.author.id)) {
       return message.reply('❌ You are not authorized to use this command!');
@@ -214,7 +214,7 @@ client.on('messageCreate', async (message) => {
       const promptText = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       if (!promptText) return;
 
-      const response =- await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${GROQ_API_KEY}`,
@@ -240,13 +240,13 @@ client.on('messageCreate', async (message) => {
 
       if (!replyText) {
         console.error("Groq Response Error:", data);
-        return message.reply('sry,ai is in problem now.');
+        return message.reply('sry, ai is in problem now.');
       }
 
       await message.reply(replyText);
     } catch (error) {
       console.error('AI Error:', error);
-      await message.reply('ops! ai brain-er sathe connect korte somossa hocche.');
+      await message.reply('ওপ্স! এআই ব্রেনের সাথে কানেক্ট করতে সমস্যা হচ্ছে।');
     }
   }
 });
