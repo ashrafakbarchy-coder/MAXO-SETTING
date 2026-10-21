@@ -240,7 +240,7 @@ client.on('messageCreate', async (message) => {
 
       if (!replyText) {
         console.error("Groq Response Error:", data);
-        return message.reply('sry, ai is in problem now.');
+        return message.reply('sry,ai is in problem now.');
       }
 
       await message.reply(replyText);
